@@ -3,4 +3,5 @@
     <string name="button_toast">Toast</string>
     <string name="button_textView">Text View</string>
     <string name="button_scan">Scan Barcode</string>
+    <string name="lookup">Lookup Barcode</string>
 </resources>
