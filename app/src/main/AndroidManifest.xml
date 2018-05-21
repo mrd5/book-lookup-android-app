@@ -3,6 +3,7 @@
     package="com.example.mathew.bookscanner">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -33,6 +34,8 @@
 
         <activity android:name=".connectConnection"
             android:label="Get Results" />
+
+
 
     </application>
 
