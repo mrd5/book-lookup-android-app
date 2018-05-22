@@ -38,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, 0);
     }
 
+    public void searchBarcodeGoodreads(View v){
+        Intent intent = new Intent(this, goodreads.class);
+        intent.putExtra("EXTRA_BARCODE_VALUE", barcodeResult.getText().toString());
+        startActivityForResult(intent, 0);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == 0){
