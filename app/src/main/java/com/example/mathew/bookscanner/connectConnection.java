@@ -3,6 +3,7 @@ package com.example.mathew.bookscanner;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,6 +32,7 @@ public class connectConnection extends AppCompatActivity {
     String url;
     TextView bookTitle;
     TextView bookDesc;
+    ImageView bookImage;
     private RequestQueue mRequestQueue;
     private StringRequest stringRequest;
     private static final String TAG = connectConnection.class.getName();
@@ -42,6 +45,7 @@ public class connectConnection extends AppCompatActivity {
         isbn = getIntent().getStringExtra("EXTRA_BARCODE_VALUE");
         bookTitle = (TextView) findViewById(R.id.bookTitle);
         bookDesc = (TextView) findViewById(R.id.bookDesc);
+        bookImage = (ImageView) findViewById(R.id.bookImage);
         url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
 
         getResults();
@@ -68,11 +72,13 @@ public class connectConnection extends AppCompatActivity {
                         JSONObject book = items.getJSONObject(0);
 
                         JSONObject volumeInfo = book.getJSONObject("volumeInfo");
+                        JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
 
+                        String smallThumbnail = imageLinks.getString("thumbnail");
                         String bookName = volumeInfo.getString("title");
                         String bookDescription = volumeInfo.getString("description");
 
-
+                        Picasso.get().load(smallThumbnail).into(bookImage);
                         bookTitle.setText(bookName);
                         bookDesc.setText(bookDescription);
                     }
