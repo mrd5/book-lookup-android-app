@@ -15,7 +15,11 @@ import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.XML;
+
+import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
 /**
  * Created by Mathew on 22-May-18.
@@ -27,6 +31,8 @@ public class goodreads extends AppCompatActivity {
     TextView bookTitle;
     TextView bookDesc;
     ImageView bookImage;
+    String name;
+
     private RequestQueue mRequestQueue;
     private StringRequest stringRequest;
     private static final String TAG = connectConnection.class.getName();
@@ -40,7 +46,7 @@ public class goodreads extends AppCompatActivity {
         bookTitle = (TextView) findViewById(R.id.bookTitle);
         bookDesc = (TextView) findViewById(R.id.bookDesc);
         bookImage = (ImageView) findViewById(R.id.bookImage);
-        url = "https://www.goodreads.com/search.xml?key=&q=" + isbn;
+        url = "https://www.goodreads.com/search.xml?key=wdsSpDEw0RUMK64bcNPnWg&q=" + isbn;
 
         getResults();
     }
@@ -53,34 +59,20 @@ public class goodreads extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Log.i(TAG, response.toString());
-                String jsonData = response;
+                String xmlData = response;
+
+                XmlToJson jsonData = new XmlToJson.Builder(xmlData).build();
 
                 try {
-                    JSONObject main = new JSONObject(jsonData);
+                    JSONObject main = new JSONObject(jsonData.toString());
+                    JSONObject search = main.getJSONObject("search");
 
-                    if (main.getInt("totalItems") == 0){
-                        bookTitle.setText("Book not found!");
-                        bookDesc.setText("");
-                    }
-                    else{
-                        JSONArray items = main.getJSONArray("items");
-                        JSONObject book = items.getJSONObject(0);
-
-                        JSONObject volumeInfo = book.getJSONObject("volumeInfo");
-                        JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
-
-                        String smallThumbnail = imageLinks.getString("thumbnail");
-                        String bookName = volumeInfo.getString("title");
-                        String bookDescription = volumeInfo.getString("description");
-
-                        Picasso.get().load(smallThumbnail).into(bookImage);
-                        bookTitle.setText(bookName);
-                        bookDesc.setText(bookDescription);
-                    }
-
-                } catch (Exception ex){
-                    ex.printStackTrace();
+                    name = main.getString("source");
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
+
+                bookDesc.setText(jsonData.toString());
 
             }
         }, new Response.ErrorListener(){
