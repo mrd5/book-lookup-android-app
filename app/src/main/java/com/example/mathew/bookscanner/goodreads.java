@@ -65,14 +65,28 @@ public class goodreads extends AppCompatActivity {
 
                 try {
                     JSONObject main = new JSONObject(jsonData.toString());
-                    JSONObject search = main.getJSONObject("search");
+                    JSONObject GoodreadsResponse = main.getJSONObject("GoodreadsResponse");
+                    JSONObject search = GoodreadsResponse.getJSONObject("search");
+                    JSONObject results = search.getJSONObject("results");
+                    JSONObject work = results.getJSONObject("work");
+                    JSONObject best_book = work.getJSONObject("best_book");
+                    JSONObject author = best_book.getJSONObject("author");
 
-                    name = main.getString("source");
+                    String name = author.getString("name");
+                    String bookImageURL = best_book.getString("image_url");
+                    String title = best_book.getString("title");
+                    String average_rating = work.getString("average_rating");
+
+                    bookTitle.setText(title);
+                    Picasso.get().load(bookImageURL).into(bookImage);
+                    book
+
                 } catch (Exception e){
                     e.printStackTrace();
                 }
 
-                bookDesc.setText(jsonData.toString());
+                //bookDesc.setText(jsonData.toString());
+
 
             }
         }, new Response.ErrorListener(){
