@@ -33,10 +33,10 @@
             android:label="Scan Barcode" />
 
         <activity android:name=".connectConnection"
-            android:label="Get Results" />
+            android:label="Google Books Results" />
 
         <activity android:name=".goodreads"
-            android:label="Goodread Results"/>
+            android:label="Goodreads Results"/>
 
     </application>
 
