@@ -1,8 +1,10 @@
 package com.example.mathew.bookscanner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,12 +29,17 @@ import org.w3c.dom.Text;
  * Created by Mathew on 18-May-18.
  */
 
+//This class passes the book's isbn through to the google books API and displays details about the book
 public class connectConnection extends AppCompatActivity {
-    String isbn;
-    String url;
+    String isbn; //barcode value
+    String url; //
+
+    //Where details will be displayed
     TextView bookTitle;
     TextView bookDesc;
     ImageView bookImage;
+
+    //Used to make the http connection to googleapis.com
     private RequestQueue mRequestQueue;
     private StringRequest stringRequest;
     private static final String TAG = connectConnection.class.getName();
@@ -51,7 +58,7 @@ public class connectConnection extends AppCompatActivity {
         getResults();
     }
 
-    private void getResults(){
+    private void getResults(){//This function makes the http connection and displays book values on the phone
         mRequestQueue = Volley.newRequestQueue(this);
 
         stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -63,22 +70,23 @@ public class connectConnection extends AppCompatActivity {
                 try {
                     JSONObject main = new JSONObject(jsonData);
 
-                    if (main.getInt("totalItems") == 0){
+                    if (main.getInt("totalItems") == 0){//If the book isn't in the google books database
                         bookTitle.setText("Book not found!");
                         bookDesc.setText("");
                     }
-                    else{
+                    else{//If the book is in the database
                         JSONArray items = main.getJSONArray("items");
                         JSONObject book = items.getJSONObject(0);
 
                         JSONObject volumeInfo = book.getJSONObject("volumeInfo");
                         JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
 
-                        String smallThumbnail = imageLinks.getString("thumbnail");
-                        String bookName = volumeInfo.getString("title");
-                        String bookDescription = volumeInfo.getString("description");
+                        String smallThumbnail = imageLinks.getString("thumbnail"); //URL of the book cover
+                        String bookName = volumeInfo.getString("title"); //Title of the book
+                        String bookDescription = volumeInfo.getString("description"); //Description of the book
 
-                        Picasso.get().load(smallThumbnail).into(bookImage);
+                        //Display the values
+                        Picasso.get().load(smallThumbnail).into(bookImage); //Picasso library used to easily display the image of the book
                         bookTitle.setText(bookName);
                         bookDesc.setText(bookDescription);
                     }
@@ -96,8 +104,11 @@ public class connectConnection extends AppCompatActivity {
         });
 
         mRequestQueue.add(stringRequest);
+    }
 
-
-
+    public void goodreads(View v){
+        Intent intent = new Intent(this, goodreads.class);
+        intent.putExtra("EXTRA_BARCODE_VALUE", isbn); //Passes barcode value from main activity to this activity
+        startActivityForResult(intent, 0);
     }
 }

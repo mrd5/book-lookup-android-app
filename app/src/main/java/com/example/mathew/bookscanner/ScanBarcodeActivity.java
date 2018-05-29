@@ -24,13 +24,15 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
+
+//This class uses the phone camera to scan for, and get a barcode value
 public class ScanBarcodeActivity extends AppCompatActivity {
-    SurfaceView cameraPreview;
+    SurfaceView cameraPreview;//Will show what the camera sees while scanning for codes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan_barcode);
+        setContentView(R.layout.activity_scan_barcode); //Shows camera preview while scanning
 
         cameraPreview = (SurfaceView) findViewById(R.id.cameraPreview);
         createCameraSource();
@@ -38,13 +40,16 @@ public class ScanBarcodeActivity extends AppCompatActivity {
 
 
     private void createCameraSource() {
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
-        final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector).setAutoFocusEnabled(true).setRequestedPreviewSize(1600, 1024).build();
-        //.setAutoFocusEnabled(true)
-        cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build(); //BarcodeDetector object
+
+        final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector).setAutoFocusEnabled(true).setRequestedPreviewSize(1600, 1024).build(); //CameraSource object
+        //setAutoFocusEnabled auto focuses the camera on load
+        //1600, 1024 for setRequestedPreviewSize ->Able to scan small barcodes or scan them from a distance
+
+        cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {//SurfaceView callback, to start and stop the camera source on surfaceCreated() and surfaceDestroyed()
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                try {
+                try {//Camera permission check is needed, start method throws IOException. Permission added in manifest file
                     if (ActivityCompat.checkSelfPermission(ScanBarcodeActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
                         //    ActivityCompat#requestPermissions
@@ -55,7 +60,7 @@ public class ScanBarcodeActivity extends AppCompatActivity {
                         // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
-                    cameraSource.start(cameraPreview.getHolder());
+                    cameraSource.start(cameraPreview.getHolder()); //Start the camera source
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -72,18 +77,18 @@ public class ScanBarcodeActivity extends AppCompatActivity {
             }
         });
 
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {//gets detected barcodes in receiveDetections method
             @Override
             public void release(){
 
             }
 
             @Override
-            public void receiveDetections(Detector.Detections<Barcode> detections){
+            public void receiveDetections(Detector.Detections<Barcode> detections){//gets barcode
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() > 0){
                     Intent intent = new Intent();
-                    intent.putExtra("barcode", barcodes.valueAt(0));
+                    intent.putExtra("barcode", barcodes.valueAt(0));//stores in intent
                     setResult(CommonStatusCodes.SUCCESS, intent);
                     finish();
                 }
