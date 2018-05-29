@@ -14,46 +14,48 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 
 public class MainActivity extends AppCompatActivity {
-    TextView barcodeResult;
-    Button showBarcode;
-    private static final String TAG = MainActivity.class.getSimpleName();
+
+    TextView barcodeResult; //Shows barcode in main activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         barcodeResult = (TextView) findViewById(R.id.textBarcode);
-
-
     }
 
-    public void scanBarcode(View v){
+    public void scanBarcode(View v){//Intent that will use the Google Barcode scanner API to get the book's barcode value
         Intent intent = new Intent(this, ScanBarcodeActivity.class);
         startActivityForResult(intent, 0);
     }
 
-    public void searchBarcode(View v){
+    public void searchBarcode(View v){//Uses the barcode value with Google Books API to return details about the book
         Intent intent = new Intent(this, connectConnection.class);
-        intent.putExtra("EXTRA_BARCODE_VALUE", barcodeResult.getText().toString());
+        intent.putExtra("EXTRA_BARCODE_VALUE", barcodeResult.getText().toString());//Passes barcode value from main activity to his activity
         startActivityForResult(intent, 0);
     }
 
-    public void searchBarcodeGoodreads(View v){
+    public void searchBarcodeGoodreads(View v){//Uses the barcode value with Goodreads API to return details about the book
         Intent intent = new Intent(this, goodreads.class);
-        intent.putExtra("EXTRA_BARCODE_VALUE", barcodeResult.getText().toString());
+        intent.putExtra("EXTRA_BARCODE_VALUE", barcodeResult.getText().toString()); //Passes barcode value from main activity to this activity
         startActivityForResult(intent, 0);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){//This is the first method called after taking an image from camera
         if (requestCode == 0){
             if (resultCode == CommonStatusCodes.SUCCESS){
-                if (data != null){
+                if (data != null){//If there is a barcode
                     Barcode barcode = data.getParcelableExtra("barcode");
                     barcodeResult.setText(barcode.displayValue);
 
+                    Intent intent = new Intent(this, connectConnection.class);
+                    intent.putExtra("EXTRA_BARCODE_VALUE", barcodeResult.getText().toString());//Passes barcode value from main activity to his activity
+                    startActivityForResult(intent, 0);
 
-                } else {
+
+                } else {//If there is no barcode
                     barcodeResult.setText("");
                 }
             }
