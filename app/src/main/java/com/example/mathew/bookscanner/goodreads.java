@@ -1,9 +1,11 @@
 package com.example.mathew.bookscanner;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 public class goodreads extends AppCompatActivity {
     String isbn; //The barcode value
     String url; //The goodreads url combined with the isbn
+    String authorId; //Unique ID of the author
 
     //Where details about the book wil be displayed
     TextView bookTitle;
@@ -110,5 +113,11 @@ public class goodreads extends AppCompatActivity {
 
 
 
+    }
+
+    public void authorLookup(View v){
+        Intent intent = new Intent(this, goodreadsAuthorSearch.class);
+        intent.putExtra("EXTRA_AUTHOR_VALUE", bookAuthor.getText().toString()); //Passes barcode value from main activity to this activity
+        startActivityForResult(intent, 0);
     }
 }
