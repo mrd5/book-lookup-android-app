@@ -38,6 +38,9 @@
         <activity android:name=".goodreads"
             android:label="Goodreads Results"/>
 
+        <activity android:name=".goodreadsAuthorSearch"
+            android:label="Books By The Same Author" />
+
     </application>
 
 
