@@ -33,7 +33,9 @@ import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 public class goodreads extends AppCompatActivity {
     String isbn; //The barcode value
     String url; //The goodreads url combined with the isbn
-    String authorId; //Unique ID of the author
+    String authorIdString; //Unique ID of the author
+    int authorIdInt;//author's identifier as int
+    int authId;
 
     //Where details about the book wil be displayed
     TextView bookTitle;
@@ -44,7 +46,7 @@ public class goodreads extends AppCompatActivity {
     //Used to make the http connection
     private RequestQueue mRequestQueue;
     private StringRequest stringRequest;
-    private static final String TAG = connectConnection.class.getName();
+    private static final String TAG = goodreads.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -82,7 +84,10 @@ public class goodreads extends AppCompatActivity {
                     JSONObject best_book = work.getJSONObject("best_book");
                     JSONObject author = best_book.getJSONObject("author");
 
+
                     String name = author.getString("name"); //Name of the author
+                    authorIdString = author.getString("id");
+                    authorIdInt = Integer.parseInt(authorIdString.replaceAll("[\\D]", ""));
                     String bookImageURL = best_book.getString("image_url"); //URL of the books front cover image
                     String title = best_book.getString("title"); //Title of the book
                     String average_rating = work.getString("average_rating"); //Average Goodreads rating of thr book
@@ -117,7 +122,7 @@ public class goodreads extends AppCompatActivity {
 
     public void authorLookup(View v){
         Intent intent = new Intent(this, goodreadsAuthorSearch.class);
-        intent.putExtra("EXTRA_AUTHOR_VALUE", bookAuthor.getText().toString()); //Passes barcode value from main activity to this activity
+        intent.putExtra("EXTRA_AUTHOR_VALUE", authorIdInt + ""); //Passes barcode value from main activity to this activity
         startActivityForResult(intent, 0);
     }
 }
